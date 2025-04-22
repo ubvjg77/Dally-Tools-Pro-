@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Tools Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Using the QR Code library link you provided -->
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0; /* Adjusted success color */
+            --warning: #f72585;
+            --info: #560bad;
+            --copy-btn-bg: linear-gradient(to right, #6c5ce7, #a29bfe);
+            --share-btn-bg: linear-gradient(to right, #25D366, #128C7E);
+            --delete-btn-bg: var(--warning);
+            --clear-btn-bg: #6c757d;
+            --main-btn-bg: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        header {
+            background: var(--main-btn-bg);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 15px 15px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+         header p {
+            margin: 0;
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+            display: inline-block;
+        }
+
+        .tool-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .tool-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--secondary);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        button {
+            background: var(--main-btn-bg);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
+            margin-right: 10px;
+            margin-bottom: 10px;
+            vertical-align: middle; /* Align buttons better if inline */
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--accent);
+            word-break: break-all;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+         .result strong {
+             color: var(--primary);
+         }
+         .result div {
+             margin-bottom: 5px;
+         }
+          .result div:last-child {
+              margin-bottom: 0;
+          }
+          .result.feedback { /* Style for copy/share feedback */
+             text-align: center;
+             font-weight: 500;
+             padding: 10px;
+             margin-top: 10px;
+             display: none; /* Hidden initially */
+         }
+         .result.feedback.success {
+             background-color: #d4edda; border-color: #c3e6cb; color: #155724; display: block;
+         }
+         .result.feedback.error {
+             background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; display: block;
+         }
+         .result.feedback.info {
+             background-color: #cfe2ff; border-color: #b8daff; color: #004085; display: block;
+         }
+
+
+        .share-btn { background: var(--share-btn-bg); }
+        .copy-btn { background: var(--copy-btn-bg); }
+        .delete-btn { background: var(--delete-btn-bg); }
+        .clear-btn { background: var(--clear-btn-bg); }
+
+        .btn-group {
+            margin-top: 15px;
+            display: flex; /* Use flex for button groups */
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 10px; /* Consistent gap */
+        }
+        /* Remove margin-right from buttons inside a btn-group */
+        .btn-group button {
+            margin-right: 0;
+            flex-grow: 1; /* Allow buttons to grow */
+             min-width: 120px; /* Minimum width */
+        }
+
+        .emoji-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .emoji-option { font-size: 24px; cursor: pointer; transition: transform 0.2s; }
+        .emoji-option:hover { transform: scale(1.2); }
+
+        #qrcode {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            min-height: 200px;
+            align-items: center;
+            border: 1px solid #eee;
+            padding: 10px;
+            background: white;
+        }
+         #qrcode img, #qrcode canvas { max-width: 100%; height: auto; }
+         .qr-instructions { font-size: 0.85em; color: #666; text-align: center; margin-top: 10px; }
+
+        .password-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+         .password-options label {
+            display: flex; align-items: center; font-weight: 400; color: var(--dark); cursor: pointer;
+        }
+        .password-options input[type="checkbox"] { width: auto; margin-right: 8px; }
+
+        .speed-test-container { text-align: center; }
+        .speed-meter { width: 100%; height: 30px; background-color: #e0e0e0; border-radius: 15px; margin: 20px 0; overflow: hidden; position: relative; }
+        .speed-bar { height: 100%; background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); width: 0%; transition: width 1s ease; }
+        .speed-result { display: flex; justify-content: space-around; margin-top: 20px; flex-wrap: wrap; gap: 10px; }
+        .speed-box { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); flex: 1; min-width: 100px; margin: 0; text-align: center; }
+        .speed-value { font-size: 24px; font-weight: bold; color: var(--primary); }
+        .speed-label { font-size: 14px; color: #666; }
+
+        .ad-container {
+            margin: 30px 0 15px 0; text-align: center; min-height: 50px;
+        }
+         .ad-container iframe { max-width: 100%; display: inline-block; }
+
+        .tab-container {
+            display: flex; margin-bottom: 20px; overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            -ms-overflow-style: none; scrollbar-width: none;
+        }
+        .tab-container::-webkit-scrollbar { display: none; }
+        .tab { padding: 12px 20px; background: transparent; border: none; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.3s ease; white-space: nowrap; color: var(--secondary); border-bottom: 3px solid transparent; }
+        .tab:hover { background-color: #f0f0f0; }
+        .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+
+        .tool-content { display: none; }
+        .tool-content.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; } header p { font-size: 1rem; }
+            .tool-section { padding: 20px 15px; } h2 { font-size: 1.3rem; }
+            .password-options { grid-template-columns: 1fr; }
+             button { width: 100%; margin-right: 0; } /* Stack buttons fully */
+             .btn-group { flex-direction: column; } /* Ensure btn-group items stack */
+        }
+         @media (max-width: 480px) {
+             .tab { padding: 10px 15px; font-size: 14px; }
+              header h1 { font-size: 1.6rem; } h2 { font-size: 1.2rem; }
+              .speed-result { flex-direction: column; } /* Stack speed boxes */
+         }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Daily Tools Pro</h1>
+            <p>All-in-one solution for your daily needs</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tab-container">
+            <!-- Tabs -->
+            <button class="tab active" onclick="openTool('emoji-converter', event)">Emoji Converter</button>
+            <button class="tab" onclick="openTool('password-generator', event)">Password Generator</button>
+            <button class="tab" onclick="openTool('age-calculator', event)">Age Calculator</button>
+            <button class="tab" onclick="openTool('qr-generator', event)">QR Generator</button>
+            <button class="tab" onclick="openTool('word-counter', event)">Word Counter</button>
+            <button class="tab" onclick="openTool('speed-test', event)">Speed Test</button>
+            <button class="tab" onclick="openTool('notepad', event)">Notepad</button>
+        </div>
+
+        <!-- Feedback Area for Copy/Share (Universal) -->
+        <div id="universal-feedback" class="result feedback" style="margin-bottom: 20px;"></div>
+
+        <!-- Text to Emoji Converter -->
+        <div id="emoji-converter" class="tool-content active">
+            <div class="tool-section">
+                <h2>Text to Emoji Converter</h2>
+                <div class="input-group">
+                    <label for="emoji-text">Enter your text:</label>
+                    <textarea id="emoji-text" rows="4" placeholder="Type something like 'happy face' or 'thumbs up'"></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Common Emojis:</label>
+                    <div class="emoji-container">
+                        <span class="emoji-option" onclick="insertEmoji('😊')">😊</span> <span class="emoji-option" onclick="insertEmoji('😂')">😂</span> <span class="emoji-option" onclick="insertEmoji('❤️')">❤️</span> <span class="emoji-option" onclick="insertEmoji('👍')">👍</span> <span class="emoji-option" onclick="insertEmoji('🙏')">🙏</span> <span class="emoji-option" onclick="insertEmoji('🔥')">🔥</span> <span class="emoji-option" onclick="insertEmoji('🎉')">🎉</span> <span class="emoji-option" onclick="insertEmoji('😍')">😍</span>
+                    </div>
+                </div>
+                <div class="btn-group">
+                   <button onclick="convertToEmoji()">Convert Text</button>
+                   <button class="copy-btn" onclick="copyResult('emoji-result')">Copy Result</button>
+                   <button class="share-btn" onclick="shareTool('emoji-converter')">Share App</button> <!-- Changed Text -->
+                </div>
+                <div class="result" id="emoji-result">Your emoji will appear here...</div>
+
+                <div class="ad-container">
+                    <p style="font-size: small; color: grey; margin-bottom: 5px;">Advertisement</p>
+                    <script type="text/javascript"> atOptions = { 'key' : '5c73fcd2faae24d4612172e13bbe530c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/5c73fcd2faae24d4612172e13bbe530c/invoke.js"></script>
+                    <script type='text/javascript' src='//pl26372768.profitableratecpm.com/ee/51/80/ee5180b00d74efc3f804f20866264e0f.js'></script>
+                    <script type='text/javascript' src='//pl26372755.profitableratecpm.com/36/cb/af/36cbafeed732fd52e914fac694e7d130.js'></script>
+                    <script type="text/javascript"> atOptions = { 'key' : '7ac621c1075a9c9d7260d51ba2e5d8f0', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/7ac621c1075a9c9d7260d51ba2e5d8f0/invoke.js"></script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Password Generator -->
+        <div id="password-generator" class="tool-content">
+            <div class="tool-section">
+                <h2>Password Generator</h2>
+                <div class="input-group"><label for="password-length">Password Length (8-64):</label><input type="number" id="password-length" min="8" max="64" value="12"></div>
+                <div class="password-options">
+                    <label><input type="checkbox" id="uppercase" checked> Uppercase (A-Z)</label> <label><input type="checkbox" id="lowercase" checked> Lowercase (a-z)</label> <label><input type="checkbox" id="numbers" checked> Numbers (0-9)</label> <label><input type="checkbox" id="symbols"> Symbols (!@#$...)</label> <label><input type="checkbox" id="exclude-similar"> Exclude similar (i,l,1,o,0)</label>
+                </div>
+                 <div class="btn-group">
+                   <button onclick="generatePassword()">Generate Password</button>
+                   <button class="copy-btn" onclick="copyResult('password-result', 'Password')">Copy Password</button>
+                   <button class="share-btn" onclick="shareTool('password-generator')">Share App</button> <!-- Changed Text -->
+                 </div>
+                <div class="result" id="password-result">Your secure password will appear here...</div>
+
+                <div class="ad-container">
+                    <p style="font-size: small; color: grey; margin-bottom: 5px;">Advertisement</p>
+                    <script type="text/javascript"> atOptions = { 'key' : '5c73fcd2faae24d4612172e13bbe530c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/5c73fcd2faae24d4612172e13bbe530c/invoke.js"></script>
+                    <script type='text/javascript' src='//pl26372768.profitableratecpm.com/ee/51/80/ee5180b00d74efc3f804f20866264e0f.js'></script>
+                    <script type='text/javascript' src='//pl26372755.profitableratecpm.com/36/cb/af/36cbafeed732fd52e914fac694e7d130.js'></script>
+                    <script type="text/javascript"> atOptions = { 'key' : '7ac621c1075a9c9d7260d51ba2e5d8f0', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/7ac621c1075a9c9d7260d51ba2e5d8f0/invoke.js"></script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Age Calculator -->
+        <div id="age-calculator" class="tool-content">
+            <div class="tool-section">
+                <h2>Age Calculator</h2>
+                <div class="input-group"><label for="birth-date">Enter your birth date:</label><input type="date" id="birth-date"></div>
+                <div class="btn-group">
+                    <button onclick="calculateAge()">Calculate Age</button>
+                    <button class="copy-btn" onclick="copyAgeSummary()">Copy Age Summary</button>
+                    <button class="share-btn" onclick="shareTool('age-calculator')">Share App</button> <!-- Changed Text -->
+                </div>
+                <div class="result" id="age-result">Your age will be calculated here...</div>
+
+                <div class="ad-container">
+                   <p style="font-size: small; color: grey; margin-bottom: 5px;">Advertisement</p>
+                   <script type="text/javascript"> atOptions = { 'key' : '5c73fcd2faae24d4612172e13bbe530c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/5c73fcd2faae24d4612172e13bbe530c/invoke.js"></script>
+                    <script type='text/javascript' src='//pl26372768.profitableratecpm.com/ee/51/80/ee5180b00d74efc3f804f20866264e0f.js'></script>
+                    <script type='text/javascript' src='//pl26372755.profitableratecpm.com/36/cb/af/36cbafeed732fd52e914fac694e7d130.js'></script>
+                    <script type="text/javascript"> atOptions = { 'key' : '7ac621c1075a9c9d7260d51ba2e5d8f0', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/7ac621c1075a9c9d7260d51ba2e5d8f0/invoke.js"></script>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Code Generator -->
+        <div id="qr-generator" class="tool-content">
+            <div class="tool-section">
+                <h2>QR Code Generator</h2>
+                <div class="input-group"><label for="qr-text">Enter text or URL:</label><input type="text" id="qr-text" placeholder="https://example.com or any text"></div>
+                <div class="btn-group">
+                   <button onclick="generateQR()">Generate QR Code</button>
+                   <button class="copy-btn" onclick="copyQrInputText()">Copy Input Text</button>
+                   <button class="share-btn" onclick="shareTool('qr-generator')">Share App</button> <!-- Changed Text -->
+                </div>
+                <div id="qrcode"><div class="qr-instructions">Enter text and click Generate.</div></div>
+                <div class="qr-instructions">To save: Right-click (Desktop) or Long-press (Mobile) the QR code image and choose "Save Image As..."</div>
+                <div class="result" id="qr-result" style="text-align: center; display: none;">QR code info</div> <!-- Hidden initially -->
+
+                <div class="ad-container">
+                    <p style="font-size: small; color: grey; margin-bottom: 5px;">Advertisement</p>
+                    <script type="text/javascript"> atOptions = { 'key' : '5c73fcd2faae24d4612172e13bbe530c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/5c73fcd2faae24d4612172e13bbe530c/invoke.js"></script>
+                    <script type='text/javascript' src='//pl26372768.profitableratecpm.com/ee/51/80/ee5180b00d74efc3f804f20866264e0f.js'></script>
+                    <script type='text/javascript' src='//pl26372755.profitableratecpm.com/36/cb/af/36cbafeed732fd52e914fac694e7d130.js'></script>
+                    <script type="text/javascript"> atOptions = { 'key' : '7ac621c1075a9c9d7260d51ba2e5d8f0', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/7ac621c1075a9c9d7260d51ba2e5d8f0/invoke.js"></script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Word Counter -->
+        <div id="word-counter" class="tool-content">
+            <div class="tool-section">
+                <h2>Word Counter</h2>
+                <div class="input-group"><label for="word-text">Enter your text:</label><textarea id="word-text" rows="6" placeholder="Type or paste your text here..." oninput="countWords()"></textarea></div>
+                <div class="btn-group">
+                    <button class="copy-btn" onclick="copyWordStats()">Copy Stats</button>
+                    <button class="share-btn" onclick="shareTool('word-counter')">Share App</button> <!-- Changed Text -->
+                </div>
+                <div class="result" id="word-result">
+                    <div>Characters: <strong id="char-count">0</strong></div> <div>Words: <strong id="word-count">0</strong></div> <div>Sentences: <strong id="sentence-count">0</strong></div> <div>Reading Time: <strong id="reading-time">0 sec</strong></div>
+                </div>
+
+                <div class="ad-container">
+                   <p style="font-size: small; color: grey; margin-bottom: 5px;">Advertisement</p>
+                    <script type="text/javascript"> atOptions = { 'key' : '5c73fcd2faae24d4612172e13bbe530c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/5c73fcd2faae24d4612172e13bbe530c/invoke.js"></script>
+                    <script type='text/javascript' src='//pl26372768.profitableratecpm.com/ee/51/80/ee5180b00d74efc3f804f20866264e0f.js'></script>
+                    <script type='text/javascript' src='//pl26372755.profitableratecpm.com/36/cb/af/36cbafeed732fd52e914fac694e7d130.js'></script>
+                    <script type="text/javascript"> atOptions = { 'key' : '7ac621c1075a9c9d7260d51ba2e5d8f0', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/7ac621c1075a9c9d7260d51ba2e5d8f0/invoke.js"></script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Internet Speed Test -->
+        <div id="speed-test" class="tool-content">
+            <div class="tool-section">
+                <h2>Internet Speed Test (Simulation)</h2>
+                <div class="speed-test-container">
+                    <p>Click the button below to simulate an internet speed test.</p>
+                    <button id="speed-test-btn" onclick="startSpeedTest()">Start Speed Test</button>
+                    <div class="speed-meter"><div class="speed-bar" id="speed-bar"></div></div>
+                    <div class="speed-result">
+                        <div class="speed-box"><div class="speed-value" id="download-speed">0</div><div class="speed-label">Download (Mbps)</div></div> <div class="speed-box"><div class="speed-value" id="upload-speed">0</div><div class="speed-label">Upload (Mbps)</div></div> <div class="speed-box"><div class="speed-value" id="ping">0</div><div class="speed-label">Ping (ms)</div></div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="copy-btn" onclick="copySpeedResults()">Copy Results</button>
+                        <button class="share-btn" onclick="shareTool('speed-test')">Share App</button> <!-- Changed Text -->
+                    </div>
+                </div>
+
+                <div class="ad-container">
+                    <p style="font-size: small; color: grey; margin-bottom: 5px;">Advertisement</p>
+                    <script type="text/javascript"> atOptions = { 'key' : '5c73fcd2faae24d4612172e13bbe530c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/5c73fcd2faae24d4612172e13bbe530c/invoke.js"></script>
+                    <script type='text/javascript' src='//pl26372768.profitableratecpm.com/ee/51/80/ee5180b00d74efc3f804f20866264e0f.js'></script>
+                    <script type='text/javascript' src='//pl26372755.profitableratecpm.com/36/cb/af/36cbafeed732fd52e914fac694e7d130.js'></script>
+                    <script type="text/javascript"> atOptions = { 'key' : '7ac621c1075a9c9d7260d51ba2e5d8f0', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/7ac621c1075a9c9d7260d51ba2e5d8f0/invoke.js"></script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Note Pad -->
+        <div id="notepad" class="tool-content">
+            <div class="tool-section">
+                <h2>Note Pad</h2>
+                 <div class="input-group">
+                    <label for="saved-notes">Load or Delete Note:</label>
+                    <div style="display: flex; gap: 10px;">
+                       <select id="saved-notes" style="flex-grow: 1;" onchange="loadSelectedNote()"></select>
+                       <button class="delete-btn" onclick="deleteSelectedNote()" style="width: auto; flex-shrink: 0;">Delete</button>
+                    </div>
+                </div>
+                <div class="input-group"><label for="note-title">Note Title:</label><input type="text" id="note-title" placeholder="Enter note title (required)"></div>
+                <div class="input-group"><label for="note-content">Note Content:</label><textarea id="note-content" rows="8" placeholder="Write your notes here..."></textarea></div>
+                <div class="btn-group">
+                    <button onclick="saveNote()">Save / Update Note</button>
+                    <button class="copy-btn" onclick="copyNoteContent()">Copy Content</button>
+                    <button class="share-btn" onclick="shareNote()">Share App</button> <!-- Changed Text -->
+                    <button class="clear-btn" onclick="clearNoteFields()">Clear Fields</button>
+                </div>
+                <div id="notepad-status" class="result feedback" style="margin-top: 15px;"></div> <!-- Status message area -->
+
+                <div class="ad-container">
+                    <p style="font-size: small; color: grey; margin-bottom: 5px;">Advertisement</p>
+                    <script type="text/javascript"> atOptions = { 'key' : '5c73fcd2faae24d4612172e13bbe530c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/5c73fcd2faae24d4612172e13bbe530c/invoke.js"></script>
+                    <script type='text/javascript' src='//pl26372768.profitableratecpm.com/ee/51/80/ee5180b00d74efc3f804f20866264e0f.js'></script>
+                    <script type='text/javascript' src='//pl26372755.profitableratecpm.com/36/cb/af/36cbafeed732fd52e914fac694e7d130.js'></script>
+                    <script type="text/javascript"> atOptions = { 'key' : '7ac621c1075a9c9d7260d51ba2e5d8f0', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} }; </script> <script type="text/javascript" src="//www.highperformanceformat.com/7ac621c1075a9c9d7260d51ba2e5d8f0/invoke.js"></script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+         // --- Universal Feedback & Context Check ---
+         const universalFeedback = document.getElementById('universal-feedback');
+         const isSecure = window.isSecureContext; // Check if context is secure (HTTPS/localhost)
+         const appShareUrl = 'https://all-in-tools.netlify.app'; // Define the fixed share URL here
+
+         function showFeedback(message, type = 'info', duration = 3000) {
+             // Clear existing timeout if any
+             if (universalFeedback.timeoutId) {
+                 clearTimeout(universalFeedback.timeoutId);
+             }
+             universalFeedback.textContent = message;
+             universalFeedback.className = `result feedback ${type}`; // Reset classes and add new type
+             universalFeedback.style.display = 'block';
+
+             // Auto-hide after duration
+             if (duration > 0) {
+                 universalFeedback.timeoutId = setTimeout(() => {
+                     universalFeedback.style.display = 'none';
+                     universalFeedback.timeoutId = null; // Clear the timeout ID
+                 }, duration);
+             }
+         }
+
+        // Request notification permission & Context Check
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!isSecure) {
+                 console.warn("Context is not secure (not HTTPS or localhost). Some features like Copy/Paste and Sharing might be restricted by the browser.");
+             }
+
+            // Notification request
+            if (typeof Notification !== 'undefined' && Notification.permission === "default" && isSecure) {
+                Notification.requestPermission().then(permission => {
+                    console.log("Notification permission:", permission);
+                });
+            } else if (Notification.permission === "granted") {
+                 console.log("Notification permission already granted.");
+            } else if (!isSecure && typeof Notification !== 'undefined'){
+                 console.log("Notifications require a secure context (HTTPS or localhost).");
+            }
+
+            // Initial setup
+            loadNotes();
+            countWords();
+            openTool('emoji-converter'); // Activate first tab
+        });
+
+        // Tab navigation
+        function openTool(toolId, event) {
+            const toolContents = document.querySelectorAll('.tool-content');
+            toolContents.forEach(content => content.classList.remove('active'));
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            document.getElementById(toolId).classList.add('active');
+            const currentTab = document.querySelector(`.tab[onclick*="openTool('${toolId}')"]`);
+            if (currentTab) currentTab.classList.add('active');
+
+             const activeTab = document.querySelector('.tab.active');
+             if(activeTab) activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+
+        // --- Generic Copy Helper ---
+        async function copyToClipboardHelper(textToCopy, feedbackName = 'Text') {
+             // Basic check for placeholder text
+            const placeholderTexts = ['will appear here', 'calculated here', 'password will appear'];
+             if (!textToCopy || placeholderTexts.some(p => textToCopy.includes(p))) {
+                 showFeedback(`${feedbackName} not available to copy yet.`, 'error');
+                 return;
+             }
+
+             if (!navigator.clipboard) {
+                 showFeedback('Clipboard API not available (needs HTTPS/localhost).', 'error');
+                 console.warn('navigator.clipboard is not available.');
+                 try { prompt(`Copy this ${feedbackName}:`, textToCopy); } catch(e) {/* Ignore */}
+                 return;
+             }
+
+             try {
+                 await navigator.clipboard.writeText(textToCopy);
+                 showFeedback(`${feedbackName} copied to clipboard!`, 'success');
+             } catch (err) {
+                 showFeedback(`Failed to copy ${feedbackName}. See console for details.`, 'error');
+                 console.error(`Clipboard copy failed for ${feedbackName}: `, err);
+                  try { prompt(`Copy this ${feedbackName}:`, textToCopy); } catch(e) {/* Ignore */}
+             }
+         }
+
+        // --- Tool Specific Functions ---
+
+        // Text to Emoji Converter (Minified for brevity, unchanged logic)
+        const emojiMap={'happy':'😊','smiling':'😊','smile':'😊','laugh':'😂','lol':'😂','sad':'😢','crying':'😢','cry':'😢','angry':'😠','mad':'😠','heart':'❤️','love':'❤️','like':'👍','ok':'👍','thumbs up':'👍','dislike':'👎','thumbs down':'👎','pray':'🙏','please':'🙏','high five':'🙏','fire':'🔥','lit':'🔥','party':'🎉','celebrate':'🎉','confetti':'🎉','in love':'😍','loving':'😍','star':'⭐','amazing':'⭐','moon':'🌙','night':'🌙','sun':'☀️','day':'☀️','sunny':'☀️','cloud':'☁️','cloudy':'☁️','rain':'🌧️','raining':'🌧️','snow':'❄️','snowing':'❄️','cat':'🐱','kitten':'🐱','dog':'🐶','puppy':'🐶','money':'💰','cash':'💵','rich':'💰','clock':'⏰','time':'⏰','book':'📖','read':'📖','pen':'✏️','write':'✏️','phone':'📱','call':'📱','mobile':'📱','computer':'💻','laptop':'💻','code':'💻','music':'🎵','song':'🎵','movie':'🎬','film':'🎬','car':'🚗','drive':'🚗','plane':'✈️','fly':'✈️','travel':'✈️','ship':'🚢','boat':'🚢','bike':'🚲','cycle':'🚲','bicycle':'🚲','pizza':'🍕','coffee':'☕','beer':'🍺','wine':'🍷','burger':'🍔','think':'🤔','thinking':'🤔','hmm':'🤔','cool':'😎','sunglasses':'😎','wink':'😉','kiss':'😘','surprised':'😮','wow':'😮','eyes':'👀','look':'👀','poop':'💩','strong':'💪','muscle':'💪','clap':'👏','clapping':'👏','check':'✔️','tick':'✔️','correct':'✔️','yes':'✔️','cross':'❌','wrong':'❌','no':'❌','cancel':'❌'};function insertEmoji(o){const e=document.getElementById("emoji-text"),t=e.selectionStart,n=e.selectionEnd;e.value=e.value.substring(0,t)+o+e.value.substring(n),e.focus(),e.selectionStart=e.selectionEnd=t+o.length,convertToEmoji()}function convertToEmoji(){const o=document.getElementById("emoji-text").value;let e=o;const t=Object.keys(emojiMap).sort((o,e)=>e.length-o.length);t.forEach(o=>{const t=new RegExp("\\b"+o.replace(/[-\/\\^$*+?.()|[\]{}]/g,"\\$&")+"\\b","gi");e=e.replace(t,o=>emojiMap[o.toLowerCase()]||o)}),document.getElementById("emoji-result").textContent=e}function copyResult(o,e="Result"){const t=document.getElementById(o);copyToClipboardHelper(t.textContent,e)}
+
+        // Password Generator (Minified, unchanged logic)
+        function generatePassword(){const o=parseInt(document.getElementById("password-length").value),e=document.getElementById("uppercase").checked,t=document.getElementById("lowercase").checked,n=document.getElementById("numbers").checked,i=document.getElementById("symbols").checked,r=document.getElementById("exclude-similar").checked,l=document.getElementById("password-result");let s="ABCDEFGHIJKLMNOPQRSTUVWXYZ",c="abcdefghijklmnopqrstuvwxyz",d="0123456789",a="!@#$%^&*()_+-=[]{}|;:,.<>?";if(r){s=s.replace(/[ILO]/g,""),c=c.replace(/[ilo]/g,""),d=d.replace(/[01]/g,"")}let p="",u=[];if(e){p+=s,u.push(s[Math.floor(Math.random()*s.length)])}if(t){p+=c,u.push(c[Math.floor(Math.random()*c.length)])}if(n){p+=d,u.push(d[Math.floor(Math.random()*d.length)])}if(i){p+=a,u.push(a[Math.floor(Math.random()*a.length)])}if(!p){l.textContent="Please select at least one character type",l.style.color="red";return}if(o<u.length){l.textContent=`Length must be at least ${u.length} for selected types`,l.style.color="orange";return}let m=u.join("");for(let g=u.length;g<o;g++){m+=p.charAt(Math.floor(Math.random()*p.length))}m=m.split("").sort(()=>.5-Math.random()).join(""),l.textContent=m,l.style.color=""}
+
+        // Age Calculator (Minified, unchanged logic)
+        function calculateAge(){const o=document.getElementById("birth-date").value,e=document.getElementById("age-result");if(!o){e.textContent="Please enter a valid birth date",e.style.color="red";return}const t=new Date(o),n=new Date;if(n.setHours(0,0,0,0),isNaN(t.getTime())||t>n){e.textContent="Please enter a valid past date",e.style.color="red";return}let i=n.getFullYear()-t.getFullYear(),r=n.getMonth()-t.getMonth(),l=n.getDate()-t.getDate();if(l<0){r--;const s=new Date(n.getFullYear(),n.getMonth(),0).getDate();l+=s}if(r<0){i--,r+=12}let c=new Date(n.getFullYear(),t.getMonth(),t.getDate());n>=c&&c.setFullYear(n.getFullYear()+1);const d=Math.ceil((c-n)/864e5);e.innerHTML=`<div>Your age is: <strong>${i}</strong> years, <strong>${r}</strong> months, and <strong>${l}</strong> days</div><div>Next birthday (${c.toLocaleDateString()}): in <strong>${d}</strong> days</div><div>Born on: <strong>${t.toLocaleDateString(void 0,{weekday:"long",year:"numeric",month:"long",day:"numeric"})}</strong></div>`,e.style.color=""}function copyAgeSummary(){const o=document.getElementById("age-result"),e=(o.innerText||o.textContent).replace(/\n+/g," ");copyToClipboardHelper(e,"Age Summary")}
+
+        // QR Code Generator (Minified, unchanged logic)
+        let qrCodeInstance=null;function generateQR(){const o=document.getElementById("qr-text").value.trim(),e=document.getElementById("qrcode"),t=document.getElementById("qr-result");if(e.innerHTML="",t.textContent="QR code will appear above",t.style.display="none",!o){t.textContent="Please enter text or URL",t.style.color="red",t.style.display="block";return}if("undefined"==typeof QRCode){t.textContent="Error: QR Code library not loaded.",t.style.color="red",t.style.display="block",console.error("QRCode library not found.");return}try{qrCodeInstance=new QRCode(e,{text:o,width:200,height:200,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.H}),t.textContent=`QR code generated for: "${o.substring(0,50)}${o.length>50?"...":""}"`,t.style.color="",t.style.display="block";const n=document.querySelector("#qrcode .qr-instructions");n&&(n.style.display="none")}catch(n){t.textContent="Error generating QR Code.",t.style.color="red",t.style.display="block",console.error("QR Code generation error:",n)}}function copyQrInputText(){const o=document.getElementById("qr-text").value;copyToClipboardHelper(o,"QR Input Text")}
+
+        // Word Counter (Minified, unchanged logic)
+        function countWords(){const o=document.getElementById("word-text").value,e=o.length;document.getElementById("char-count").textContent=e;const t=o.match(/\b\w+\b/g),n=t?t.length:0;document.getElementById("word-count").textContent=n;const i=o.split(/[.!?]+/).filter(Boolean);let r=0;o.trim().length>0&&(r=i.length>0?i.filter(o=>o.trim().length>0).length:o.trim()?1:0,0===r&&n>0&&(r=1)),document.getElementById("sentence-count").textContent=r;const l=225,s=n/l;let c="";c=s<1?`${Math.ceil(60*s)} sec`:`${Math.ceil(s)} min`,document.getElementById("reading-time").textContent=c||"0 sec"}function copyWordStats(){const o=document.getElementById("char-count").textContent,e=document.getElementById("word-count").textContent,t=document.getElementById("sentence-count").textContent,n=document.getElementById("reading-time").textContent,i=`Characters: ${o}, Words: ${e}, Sentences: ${t}, Reading Time: ${n}`;copyToClipboardHelper(i,"Word Count Stats")}
+
+        // Internet Speed Test (Minified, unchanged logic)
+        let speedTestInterval=null;function startSpeedTest(){const o=document.getElementById("speed-test-btn"),e=document.getElementById("speed-bar"),t=document.getElementById("download-speed"),n=document.getElementById("upload-speed"),i=document.getElementById("ping");o.disabled=!0,o.textContent="Testing...",t.textContent="...",n.textContent="...",i.textContent="...",e.style.width="0%",e.style.transition="width 0.2s linear",speedTestInterval&&clearInterval(speedTestInterval);let r=0,l="ping";speedTestInterval=setInterval(()=>{r+=5*Math.random()+2,r=Math.min(r,100),e.style.width=`${r}%`,"ping"===l?r>=20&&(i.textContent=Math.floor(50*Math.random()+10),l="download"):"download"===l?(t.textContent=(100*Math.random()+10)*(r/100).toFixed(2),r>=65&&(l="upload")):"upload"===l&&(n.textContent=(40*Math.random()+5)*((r-65)/35).toFixed(2)),r>=100&&(clearInterval(speedTestInterval),e.style.transition="width 1s ease",t.textContent=(250*Math.random()+20).toFixed(2),n.textContent=(80*Math.random()+5).toFixed(2),o.disabled=!1,o.textContent="Start Speed Test Again","undefined"!=typeof Notification&&"granted"===Notification.permission&&new Notification("Speed Test Complete (Simulation)",{body:`Download: ${t.textContent} Mbps, Upload: ${n.textContent} Mbps, Ping: ${i.textContent} ms`}))},150)}function copySpeedResults(){const o=document.getElementById("download-speed").textContent,e=document.getElementById("upload-speed").textContent,t=document.getElementById("ping").textContent;if("..."===o||"0"===o){showFeedback("Run the speed test first to get results.","info");return}const n=`Download: ${o} Mbps, Upload: ${e} Mbps, Ping: ${t} ms (Simulated)`;copyToClipboardHelper(n,"Speed Test Results")}
+
+       // --- Note Pad --- (Minified, unchanged logic)
+        const NOTES_KEY="dailyToolsPro_notes_v2";function getNotes(){try{const o=localStorage.getItem(NOTES_KEY);return o?JSON.parse(o):[]}catch(o){return console.error("Error reading notes:",o),showNotepadStatus("Error loading notes.","error"),[]}}function saveNotes(o){try{localStorage.setItem(NOTES_KEY,JSON.stringify(o))}catch(o){console.error("Error saving notes:",o),showNotepadStatus("Error saving notes. Storage might be full.","error")}}function loadNotes(){const o=getNotes(),e=document.getElementById("saved-notes");e.innerHTML='<option value="">-- Select a Note --</option>',o.sort((o,e)=>o.title.localeCompare(e.title)),o.forEach(o=>{const t=document.createElement("option");t.value=o.title,t.textContent=o.title,e.appendChild(t)}),clearNoteFieldsIfNeeded()}function loadSelectedNote(){const o=document.getElementById("saved-notes").value,e=getNotes(),t=e.find(e=>e.title===o);t?(document.getElementById("note-title").value=t.title,document.getElementById("note-content").value=t.content,showNotepadStatus(`Loaded note: "${t.title}"`,"success")):(clearNoteFields(),showNotepadStatus("Select a note to load.","info"))}function saveNote(){const o=document.getElementById("note-title"),e=document.getElementById("note-content"),t=o.value.trim(),n=e.value;if(!t){showNotepadStatus("Note title cannot be empty.","error"),o.focus();return}const i=getNotes(),r=i.findIndex(o=>o.title.toLowerCase()===t.toLowerCase());let l="";r>=0?(i[r].title=t,i[r].content=n,l=`Note "${t}" updated successfully!`):(i.push({title:t,content:n}),l=`Note "${t}" saved successfully!`),saveNotes(i),loadNotes(),document.getElementById("saved-notes").value=t,showNotepadStatus(l,"success")}function deleteSelectedNote(){const o=document.getElementById("saved-notes"),e=o.value;if(!e){showNotepadStatus("Select a note to delete first.","info");return}if(!confirm(`Are you sure you want to delete the note "${e}"? This cannot be undone.`))return;let t=getNotes();t=t.filter(o=>o.title!==e),saveNotes(t),loadNotes(),clearNoteFields(),showNotepadStatus(`Note "${e}" deleted.`,"success")}function clearNoteFields(){document.getElementById("note-title").value="",document.getElementById("note-content").value="",document.getElementById("saved-notes").value="",showNotepadStatus("Editor fields cleared.","info")}function clearNoteFieldsIfNeeded(){""===document.getElementById("saved-notes").value&&(document.getElementById("note-title").value="",document.getElementById("note-content").value="")}function showNotepadStatus(o,e="info"){const t=document.getElementById("notepad-status");t.textContent=o,t.className=`result feedback ${e}`,t.style.display="block",setTimeout(()=>{t.style.display="none"},4e3)}function copyNoteContent(){const o=document.getElementById("note-content").value;copyToClipboardHelper(o,"Note Content")}
+
+
+        // --- Share Functionality (UPDATED) ---
+        async function shareTool(toolId) {
+            const url = appShareUrl; // Use the fixed global URL
+
+            if (!navigator.share && !isSecure) {
+                showFeedback('Sharing requires a secure connection (HTTPS). Try copying the link instead.', 'error', 5000);
+                console.warn('Navigator.share API not available and context is not secure.');
+                return;
+            }
+             // Define default/fallback share content
+            let shareText = `Check out this awesome set of tools on Daily Tools Pro!`;
+            let shareTitle = 'Daily Tools Pro - Useful Online Tools';
+            const toolNames = {'emoji-converter':'Emoji Converter','password-generator':'Password Generator','age-calculator':'Age Calculator','qr-generator':'QR Code Generator','word-counter':'Word Counter','speed-test':'Internet Speed Test','notepad':'Note Pad'};
+            const toolName = toolNames[toolId];
+
+             if (toolName) {
+                 shareTitle = `Daily Tools Pro - ${toolName}`; // Keep specific title
+                 // Customize text slightly for context, but emphasize the app link
+                 shareText = `Check out the ${toolName} (and more!) on Daily Tools Pro. Very useful!`;
+
+                 // Optional: Append specific results to the text if desired, but keep it concise
+                 if (toolId === 'speed-test') { const dl = document.getElementById('download-speed').textContent; if (dl !== '...' && dl !== '0') { shareText = `Found this useful Speed Test on Daily Tools Pro (My result: ${dl} Mbps Down). Check out all the tools!`; } }
+                 else if (toolId === 'age-calculator') { const ageResult = document.getElementById('age-result').textContent; if (!ageResult.includes('calculated here')) { const ageMatch = ageResult.match(/(\d+)\s+years/); if (ageMatch) { shareText = `Calculated age (${ageMatch[1]} years) with the Age Calculator on Daily Tools Pro. Check out all the tools!`; } } }
+             }
+
+            const shareData = { title: shareTitle, text: shareText, url: url };
+
+            if (navigator.share) {
+                 try {
+                     await navigator.share(shareData);
+                     console.log('Successful share via navigator.share');
+                     showFeedback('App link shared successfully!', 'success'); // Updated feedback
+                 } catch (error) {
+                      console.log('Error sharing via navigator.share:', error);
+                      if (error.name !== 'AbortError') {
+                         showFeedback('Sharing failed. App link copied as fallback.', 'error');
+                         copyToClipboardHelper(`${shareText}\n\n${url}`, 'App Link'); // Updated fallback text
+                      } else {
+                          console.log('User cancelled sharing.');
+                      }
+                 }
+             } else {
+                 // Fallback for browsers without navigator.share
+                 showFeedback('Web Share API not supported. App link copied instead.', 'info');
+                 copyToClipboardHelper(`${shareText}\n\n${url}`, 'App Link'); // Use helper for feedback
+             }
+         }
+
+         async function shareNote() {
+            // This function now also shares the main app link, not the note content
+             const url = appShareUrl; // Use the fixed global URL
+             const shareText = `Check out the Notepad tool (and others!) on Daily Tools Pro!`;
+             const shareTitle = 'Daily Tools Pro - Useful Online Tools';
+
+             if (!navigator.share && !isSecure) {
+                 showFeedback('Sharing requires a secure connection (HTTPS). App link copied instead.', 'error', 5000);
+                 copyToClipboardHelper(`${shareText}\n\n${url}`, 'App Link'); // Fallback immediately
+                 return;
+             }
+
+             const shareData = { title: shareTitle, text: shareText, url: url };
+
+             if (navigator.share) {
+                  try {
+                      await navigator.share(shareData);
+                      console.log('App link shared successfully via navigator.share from notepad');
+                      showNotepadStatus('App link shared successfully!', 'success'); // Use notepad status for context
+                  } catch (error) {
+                       console.log('Error sharing app link via navigator.share from notepad:', error);
+                       if (error.name !== 'AbortError') {
+                          showNotepadStatus('Sharing failed. App link copied as fallback.', 'error');
+                          copyToClipboardHelper(`${shareText}\n\n${url}`, 'App Link'); // Fallback
+                       } else {
+                           console.log('User cancelled sharing.');
+                       }
+                  }
+              } else {
+                  // Fallback
+                  showNotepadStatus('Sharing not supported. App link copied instead.', 'info');
+                  copyToClipboardHelper(`${shareText}\n\n${url}`, 'App Link');
+              }
+          }
+
+    </script>
+</body>
+</html>
